@@ -25,7 +25,8 @@ client = gspread.authorize(creds)
 sheet = client.open("LevkinsPayments").sheet1
 
 # Токен бота
-BOT_TOKEN = "7906156112:AAHKIdobh_zI9LHRxiJJHi3xmR4EMemiPnM"
+import os
+BOT_TOKEN = os.environ["BOT_TOKEN"]
 
 # Условие отмены
 cancel_filter = MessageHandler(filters.Regex("^❌ Отмена$"), lambda u, c: cancel(u, c))
