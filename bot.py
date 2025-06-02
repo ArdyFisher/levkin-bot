@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("levkinbot-3f4c6dfcd2e8.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("/etc/secrets/levkinbot-3f4c6dfcd2e8.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("LevkinsPayments").sheet1
 
