@@ -11,27 +11,36 @@ from telegram.ext import (
 )
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+from threading import Thread
+from flask import Flask
 
-# Состояния
+# --- Flask Fake Server ---
+app_flask = Flask(__name__)
+
+@app_flask.route('/')
+def home():
+    return 'Bot is running!'
+
+def run_flask():
+    app_flask.run(host='0.0.0.0', port=10000)
+
+Thread(target=run_flask).start()
+
+# --- Telegram Bot Logic ---
 DATE, SELLER, DESCRIPTION, PRICE, UNIT, QUANTITY, NOTE, CONFIRM = range(8)
 
-# Логи
 logging.basicConfig(level=logging.INFO)
 
-# Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("/etc/secrets/levkinbot-3f4c6dfcd2e8.json", scope)
 client = gspread.authorize(creds)
 sheet = client.open("LevkinsPayments").sheet1
 
-# Токен бота
-import os
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 
-# Условие отмены
 cancel_filter = MessageHandler(filters.Regex("^❌ Отмена$"), lambda u, c: cancel(u, c))
 
-# Старт
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("➕ Новая запись"), KeyboardButton("❌ Отмена")]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
